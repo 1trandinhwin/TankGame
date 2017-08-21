@@ -10,8 +10,9 @@ class Missile {
   //stores the acceleration of the missile
   PVector acceleration = new PVector();
   
-  //image of the missile
+  //image of the missiles
   PImage missile;
+  PImage teleMissile;
   //these stores the locations and dimensions of the hit box of the missile
   PVector hitBoxPos = new PVector (15, 0);
   PVector hitBoxSize = new PVector (20, 20);
@@ -40,9 +41,12 @@ class Missile {
     strength = _strength;
     fromPlayer = _fromPlayer;
     
-    //loads the missile image and resizes it
+    //loads the missile images and resizes it
     missile = loadImage("missile.png");
     missile.resize(50, 20);
+    
+    teleMissile = loadImage("teleMissile.png");
+    teleMissile.resize(50, 20);
   }
   
   //this updates the strength of the missile using the parameter of s
@@ -59,6 +63,7 @@ class Missile {
   void update() {
     direction.add(acceleration);
     position.add(direction);
+    
   }
 
   //this returns the current position of the missile
@@ -116,6 +121,15 @@ class Missile {
     return PVector.dist(position, otherMissilePos) <= missileSize*2; 
   }
   
+  boolean isColliding(float missileSize) {
+    return (position.y < missileSize); 
+  }
+  
+  /*
+  void isColliding() {
+    
+  }*/
+  
   //returns the current size of the hit box radius
   float getSize() {
     return hitBoxSize.x;
@@ -133,7 +147,13 @@ class Missile {
     rotate(direction.heading());
     imageMode(CENTER);
     //draws the missile image
-    image(missile, 0, 0);
+    if (this.getClass() == Missile.class) {
+      //normal missile
+      image(missile, 0, 0);
+    } else {
+      //teleporting missile
+      image(teleMissile, 0, 0);
+    }
     imageMode(CORNER);
     
     //sets the hit box position within the modified matrix
@@ -147,5 +167,6 @@ class Missile {
     hitBoxPos.x += position.x;
     hitBoxPos.y += position.y;
   }
+  
 
 }

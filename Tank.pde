@@ -1,5 +1,12 @@
 //creates turret object
 
+//enums for the orientation of the tank
+enum Orientation {
+  LEFT_EDGE,
+  BOTTOM_EDGE,
+  RIGHT_EDGE,
+  TOP_EDGE,
+}
 
 class Tank {
   //stores the position of the tank
@@ -17,6 +24,9 @@ class Tank {
   
   //stores which tank it is
   boolean isPlayer;
+  
+  //variable to store the orientation
+  Orientation orientation = Orientation.BOTTOM_EDGE;
   
   //turret object constructer
   //parameters are as follows:
@@ -36,7 +46,6 @@ class Tank {
     tankBodyP = loadImage("tankBodyP.png");
     //600x227 approx for original size
     tankBodyP.resize(int(size.x), int(size.y) );
-    //tankBodyP.resize(60, 23);
     
     tankBodyE = loadImage("tankBodyE.png");
     tankBodyE.resize(int(size.x), int(size.y) );
@@ -44,21 +53,58 @@ class Tank {
   
   //moves the tank according to the keys pressed
   void move() {
-    if (key == 'd') {
-      if (position.x + size.x/2 >= 280) {
-        //is past the limit
-      } else {
-        //moves to the right
-        position.x += 5;
-      }
-    } else if (key == 'a') {
-      if (position.x - (size.x/2 - 8) <= 0) {
-        //is past the limit
-      } else {
-        //moves to the left
-        position.x -= 5;
-      }
-    } 
+    //tank moves differently depending on which edge it is on
+    if (playerTank.orientation == Orientation.BOTTOM_EDGE ||
+        playerTank.orientation == Orientation.TOP_EDGE) {
+      if (key == 'd') {
+        if ( (position.x + size.x/2 >= 280 && position.x < 300) || position.x + size.x/2 >= width) {
+          //is past the limit
+        } else {
+          //moves to the right
+          position.x += 5;
+        }
+      } else if (key == 'a') {
+        if (position.x - (size.x/2 - 8) <= 0 || (position.x - (size.x/2 - 8) <= 320 && position.x > 300) ) {
+          //is past the limit
+        } else {
+          //moves to the left
+          position.x -= 5;
+        }
+      } 
+    } else if (playerTank.orientation == Orientation.LEFT_EDGE) {
+      if (key == 'd') {
+        if (position.y + size.x/2 >= height - 50) {
+          //is past the limit
+        } else {
+          //moves to down
+          position.y += 5;
+        }
+      } else if (key == 'a') {
+        if (position.y - (size.x/2 - 8) <= 0) {
+          //is past the limit
+        } else {
+          //moves to the left
+          position.y -= 5;
+        }
+      } 
+    } else if (playerTank.orientation == Orientation.RIGHT_EDGE) {
+      if (key == 'a') {
+        if (position.y + size.x/2 >= height - 50) {
+          //is past the limit
+        } else {
+          //moves to down
+          position.y += 5;
+        }
+      } else if (key == 'd') {
+        if (position.y - (size.x/2 - 8) <= 0) {
+          //is past the limit
+        } else {
+          //moves to the left
+          position.y -= 5;
+        }
+      } 
+      
+    }
   }
   
   //returns the current position of the tank
@@ -72,21 +118,47 @@ class Tank {
   }
   
   //updates the position of the tank with a parameter of the xPos
-  void updatePosition(float xPos) {
+  void updatePosition(float xPos, float yPos) {
     //updates the position PVector
     position.x = xPos;
+    position.y = yPos;
   }
   
   //this displays the tank
   void display() {
     //draws the images depending on whose tank it is    
+    
+    pushMatrix();
+    translate(position.x, position.y);
+    
+    //rotates the tank according to its orientation
+    switch (orientation) {
+      case LEFT_EDGE:
+        rotate(HALF_PI);
+        break;
+      case BOTTOM_EDGE:
+        rotate(0);
+        break;
+      case RIGHT_EDGE:
+        rotate(-HALF_PI);
+        scale(-1, 1);
+        break;
+      case TOP_EDGE:
+        rotate(PI);
+        scale(-1, 1);
+        break;
+    }
+    
+    //display different images for player and enemy
     imageMode(CENTER);
     if (isPlayer) {
-      image(tankBodyP, position.x, position.y);
+      image(tankBodyP, 0, 0);
     } else {
-      image(tankBodyE, position.x, position.y);
+      image(tankBodyE, 0, 0);
     }
     imageMode(CORNER);
+  
+    popMatrix();
   }
   
   //updates the health of the tank

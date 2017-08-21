@@ -5,13 +5,13 @@ int powerupIndex = 0;
 
 //Enum used to determine powerup types
 enum Type {
-     HEALTH,
-     //LARGERMISSILE,
-     POWERFULMISSILE,
-     DESTROYWALL;     
-     static Type getPowerup(int index){
-       return values()[index];
-     }
+   HEALTH,
+   //LARGERMISSILE,
+   POWERFULMISSILE,
+   DESTROYWALL;     
+   static Type getPowerup(int index){
+     return values()[index];
+   }
 }
   
 class Powerup {  
@@ -81,6 +81,7 @@ class Powerup {
         return;
        case DESTROYWALL:
          initDestruction(bricks);//Start destroying the wall
+         fromTop = false;
          return;
     }
     
@@ -117,7 +118,7 @@ class Powerup {
     circleDistance.x = abs(pos.x - rectPos.x);//get delta y
     circleDistance.y = abs(pos.y - rectPos.y);//get delta x
     
-    println(circleDistance);
+    //println(circleDistance);
 
     if (circleDistance.x > (rectSize.x/2 + 10)) { 
       return false;

@@ -57,13 +57,15 @@ class Barrel {
   void updatePos(PVector position, float mousex, float mousey) {
     //updates tankPos variable
     tankPos.set(position);
-    //limits the movement of the barrel to 90 degrees
+    //limits the movement of the barrel to 180 degrees
     if (mousey > 550) {
       mousey = 550;
     }
+    /*
     if (mousex < playerTank.currentPosition().x) {
       mousex = playerTank.currentPosition().x;
-    }
+    }*/
+    
     //updates mousePos variable
     mousePos.set(mousex, mousey);
   }
@@ -74,7 +76,7 @@ class Barrel {
   }
   
   //this displays the barrel
-  void display() {
+  void display(boolean showCharge, float missileVel) {
     //calls the setDirection method
     setDirection();
     
@@ -82,9 +84,39 @@ class Barrel {
     pushMatrix();
     //this translates the origin to the location of the barrel
     if (isPlayer) {
-      translate(tankPos.x+11, tankPos.y-6);
+      //player's missile
+      switch (playerTank.orientation) {
+        //rotates the tank accordingly to orientation
+        case LEFT_EDGE:
+          translate(tankPos.x+6, tankPos.y+11);
+          break;
+        case BOTTOM_EDGE: 
+          translate(tankPos.x+11, tankPos.y-6);
+          break;
+        case RIGHT_EDGE:
+          translate(tankPos.x-6, tankPos.y+11);
+          break;
+        case TOP_EDGE:
+          translate(tankPos.x+11, tankPos.y+6);
+          break;
+      }
     } else {
-      translate(tankPos.x-11, tankPos.y-6);
+      //same as above but with enemy's tank
+      switch (enemyTank.orientation) {
+        case LEFT_EDGE:
+          translate(tankPos.x+6, tankPos.y-11);
+          break;
+        case BOTTOM_EDGE: 
+          translate(tankPos.x-11, tankPos.y-6);
+          break;
+        case RIGHT_EDGE:
+          translate(tankPos.x-6, tankPos.y-11);
+          break;
+        case TOP_EDGE:
+          translate(tankPos.x-11, tankPos.y+6);
+          break;
+      }
+      
     }
 
     //this rotates the grid to the heading of the barrel
@@ -95,6 +127,17 @@ class Barrel {
     } else {
       image(tankBarrelE, -2.5, 0);
     }
+    
+    //this displays the charge meter around the tip of the barrel
+    if (showCharge) {
+      fill(missileVel*6.375, 255-missileVel*5, 0);
+      noStroke();
+      //larger velocity would make larger ellipse
+      ellipse(0, 27, missileVel/2, missileVel/2);
+      fill(255);
+      stroke(1);
+    }
+    
     popMatrix();
   }
   
